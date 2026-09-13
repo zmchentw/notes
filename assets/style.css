@@ -716,14 +716,28 @@ figure.video figcaption .yr {
 /* ---------- 瀏覽次數 ---------- */
 
 .hits {
-  margin: .5rem 0 0;
-  font-size: .8rem;
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.2;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  padding: .22rem .55rem .28rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg-raised);
 }
 .hits b {
   font-weight: 700;
   color: var(--ink-soft);
+}
+
+.hits__icon { display: none; }
+
+/* 窄螢幕改用圖示，避免文字擠掉導覽 */
+@media (max-width: 30rem) {
+  .hits__label { display: none; }
+  .hits__icon  { display: inline; margin-right: .25rem; }
 }
 
 /* ---------- 頁尾 ---------- */
