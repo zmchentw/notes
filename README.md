@@ -90,6 +90,38 @@ JPEG 存在倉庫內，不熱連結他人伺服器。授權標示寫在圖片下
 影片一律使用官方 YouTube 頻道的 `youtube-nocookie.com` 嵌入播放器，
 不另存任何影音檔案。
 
+## 瀏覽次數計數器
+
+資料存在 **Cloudflare D1**，API 是一個 **Pages Function**，跟網站一起自動部署。
+不需要任何 API 金鑰，前端沒有外部依賴。
+
+| 元件 | 位置 |
+|---|---|
+| D1 資料庫 | `notes-counter`（APAC 區域） |
+| 資料表 | `page_views (path, views, updated_at)` |
+| API | `functions/api/views.js` → `/api/views` |
+| D1 綁定 | `wrangler.toml` 的 `[[d1_databases]]`，綁定名稱 `DB` |
+| 前端 | `assets/counter.js`，顯示在各頁頁尾 |
+
+用法：
+
+```
+POST /api/views    {"path": "/index"}      遞增並回傳新次數
+GET  /api/views?path=/index                只讀取
+```
+
+幾個設計要點：
+
+- **兩個網址共用同一份計數。** 前端會把路徑正規化，GitHub Pages 的
+  `/notes/lesserafim.html` 與 Cloudflare 的 `/lesserafim` 都記成 `/lesserafim`。
+  API 端有 CORS 白名單，所以 GitHub Pages 也能呼叫 Cloudflare 上的 API。
+- **同一個工作階段重新載入不會重複累加**，靠 `sessionStorage` 記錄。
+- **計數器失效不影響閱讀**：抓不到數字就把整個元素隱藏，不顯示錯誤。
+- API 只接受 `^/[A-Za-z0-9_\-/]*$` 且長度 120 以內的路徑，避免被塞垃圾資料。
+
+> `wrangler.toml` 存在時，Cloudflare 會以它為設定來源，後台的建置設定會被忽略。
+> `name` 必須與 Pages 專案名稱一致（`notes`）。
+
 ## 內容來源
 
 站上的內容整理自對話紀錄，外部事實的來源連結都列在各頁底部。

@@ -1,0 +1,18 @@
+#  Cloudflare Pages 專案設定
+#
+#  這個檔案存在時，Cloudflare 會以它為設定來源，後台的建置與綁定設定
+#  會被忽略。name 必須與 Pages 專案名稱一致。
+#
+#  這個站是純靜態檔案，沒有建置步驟，所以輸出目錄就是倉庫根目錄。
+
+name = "notes"
+compatibility_date = "2026-09-13"
+pages_build_output_dir = "."
+
+#  瀏覽次數計數器用的 D1 資料庫。
+#  functions/api/views.js 透過 env.DB 存取。
+
+[[d1_databases]]
+binding       = "DB"
+database_name = "notes-counter"
+database_id   = "14113870-1c0d-4d62-b37e-bbf05c7ec117"
