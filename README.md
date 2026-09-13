@@ -2,6 +2,15 @@
 
 LE SSERAFIM 筆記靜態網站。純 HTML／CSS，無框架、無建置步驟、無外部資源依賴。
 
+## 線上網址
+
+| 平台 | 網址 |
+|---|---|
+| GitHub Pages | <https://zmchentw.github.io/notes/> |
+| Cloudflare Pages | <https://notes-7ri.pages.dev/> |
+
+兩邊都在 push 到 `main` 之後自動更新。
+
 ## 內容
 
 | 頁面 | 說明 |
@@ -9,6 +18,7 @@ LE SSERAFIM 筆記靜態網站。純 HTML／CSS，無框架、無建置步驟、
 | `index.html` | 首頁與三十秒摘要 |
 | `lesserafim.html` | LE SSERAFIM 入門指南：團名、成員背景、代表曲、為什麼吸引人 |
 | `concert.html` | 2026 PUREFLOW 台北演唱會：時間地點、票價、售票時程 |
+| `404.html` | 找不到頁面時顯示，兩個平台都會自動採用 |
 
 ## 本機預覽
 
@@ -24,71 +34,47 @@ start index.html
 python -m http.server 8000
 ```
 
-## 部署
-
-推上 `main` 分支後，兩邊會同時自動部署。
+## 部署設定
 
 ### GitHub Pages
 
-已啟用，來源是 `main` 分支的根目錄。倉庫裡的 `.nojekyll` 讓 GitHub 跳過 Jekyll 處理，
-直接原樣提供靜態檔案。
-
-網址：`https://zmchentw.github.io/notes/`
+- 來源：`main` 分支的根目錄
+- `.nojekyll` 讓 GitHub 跳過 Jekyll 處理，直接原樣提供靜態檔案
+- push 後由 `pages-build-deployment` 自動建置，約 20–30 秒完成
 
 ### Cloudflare Pages
 
-有兩種接法，**選一種就好**。
+採用 **Cloudflare 後台的 Git 整合**，不需要 API token 也不需要 GitHub secrets。
+設定如下：
 
-#### 方式 A — Cloudflare 後台 Git 整合（推薦，不需要任何 token）
-
-在 Cloudflare 後台把這個倉庫接上去，之後每次 push 由 Cloudflare 自己抓取並部署：
-
-1. 進入 [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Workers & Pages**
-2. **Create** → **Pages** → **Connect to Git**
-3. 授權 GitHub，選擇 `zmchentw/notes` 倉庫
-4. 建置設定全部留空：
-   - Framework preset：`None`
-   - Build command：**留空**
-   - Build output directory：`/`
-5. **Save and Deploy**
-
-這個方式不需要 API token，也不需要 GitHub secrets。
-接上之後 `.github/workflows/deploy-cloudflare.yml` 就不需要了，可以刪除。
-
-#### 方式 B — GitHub Actions 推送部署
-
-如果偏好由 GitHub Actions 主動推送，倉庫裡已經備好
-`.github/workflows/deploy-cloudflare.yml`。啟用前要先做兩件事：
-
-**1. 在 Cloudflare 建立 API token**
-
-Cloudflare Dashboard → 右上角帳號圖示 → **API Tokens** → **Create Token**
-→ 使用範本 **Edit Cloudflare Workers**（或自訂一個帶 `Cloudflare Pages: Edit` 權限的 token）。
-
-同時記下 **Account ID**（在 Workers & Pages 頁面右側就能看到）。
-
-**2. 加入 GitHub repository secrets**
-
-倉庫 → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**：
-
-| Secret 名稱 | 值 |
+| 項目 | 值 |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | 上一步建立的 token |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare 帳號 ID |
+| Project name | `notes` |
+| Production branch | `main` |
+| Framework preset | `None` |
+| Build command | （空白） |
+| Build output directory | `/` |
 
-**3. 建立 Pages 專案**（只需一次）
+Cloudflare 的 GitHub App 只授權存取 `zmchentw/notes` 這一個倉庫，而非全部倉庫。
 
-```bash
-npx wrangler pages project create notes --production-branch main
-```
+> **注意**：Cloudflare Pages 專案分成 *Git 整合* 與 *直接上傳* 兩種模式，建立之後**不能互換**。
+> 這個專案是 Git 整合模式，所以不需要（也不該用）`wrangler pages deploy`。
 
-設定完成後，每次 push 到 `main` 就會自動部署。
+## 兩個平台的行為差異
 
-> **注意**：Cloudflare Pages 的專案分成 *Git 整合* 與 *直接上傳* 兩種模式，
-> 建立之後**不能互換**。方式 A 建立的是 Git 整合專案，方式 B 是直接上傳專案。
-> 所以請先決定用哪一種再動手。
+| 行為 | GitHub Pages | Cloudflare Pages |
+|---|---|---|
+| `/lesserafim.html` | 直接提供 | 308 轉址到 `/lesserafim` |
+| 正規網址 | 含 `.html` | 不含 `.html` |
+| 找不到的路徑 | 回 `404.html`，狀態 404 | 回 `404.html`，狀態 404 |
 
-## 授權與內容來源
+內部連結一律寫成 `xxx.html`：在 GitHub Pages 上直接命中，在 Cloudflare 上會轉址一次到無後綴網址。
+兩邊都能正常運作，所以不需要為了其中一邊改寫連結。
+
+沒有 `404.html` 時，Cloudflare Pages 會對不存在的路徑**退回首頁並回傳 200**，
+而不是 404 —— 這是加入 `404.html` 的原因。
+
+## 內容來源
 
 站上的內容整理自對話紀錄，外部事實的來源連結都列在各頁底部。
 票務與演唱會資訊變動快，實際請以官方公告為準。
