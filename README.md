@@ -74,7 +74,23 @@ Cloudflare 的 GitHub App 只授權存取 `zmchentw/notes` 這一個倉庫，而
 沒有 `404.html` 時，Cloudflare Pages 會對不存在的路徑**退回首頁並回傳 200**，
 而不是 404 —— 這是加入 `404.html` 的原因。
 
+## 圖片與影片
+
+`assets/img/` 的照片全部取自 Wikimedia Commons 的自由授權檔案，下載後縮小並轉為
+JPEG 存在倉庫內，不熱連結他人伺服器。授權標示寫在圖片下方，完整清單見
+`lesserafim.html` 的「圖片出處」一節。
+
+| 檔案 | 來源 | 授權 |
+|---|---|---|
+| `cover-gda.jpg` | 2026 金唱片大獎紅毯，_TV10 | CC BY 4.0 |
+| `cover-live.jpg` | Easy Crazy Hot 巡演西雅圖場，David Lee | CC BY 4.0 |
+| `member-*.jpg` | K-POPIT 케이팝잇、티비텐 | CC BY 3.0 |
+| `logo-white.svg` | Source Music | 公有領域 |
+
+影片一律使用官方 YouTube 頻道的 `youtube-nocookie.com` 嵌入播放器，
+不另存任何影音檔案。
+
 ## 內容來源
 
 站上的內容整理自對話紀錄，外部事實的來源連結都列在各頁底部。
-票務與演唱會資訊變動快，實際請以官方公告為準。
+演唱會資訊變動快，實際請以官方公告為準。
