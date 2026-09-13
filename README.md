@@ -1,6 +1,6 @@
 # notes
 
-LE SSERAFIM 筆記靜態網站。純 HTML／CSS，無框架、無建置步驟、無外部資源依賴。
+LE SSERAFIM 靜態資料站。純 HTML／CSS，無框架、無建置步驟、無外部資源依賴。
 
 ## 線上網址
 
