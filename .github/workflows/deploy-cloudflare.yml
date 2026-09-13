@@ -1,0 +1,56 @@
+name: Deploy to Cloudflare Pages
+
+# 方式 B：由 GitHub Actions 主動推送到 Cloudflare Pages。
+#
+# 啟用前需要先設定兩個 repository secrets（Settings → Secrets and variables → Actions）：
+#   CLOUDFLARE_API_TOKEN   帶有 Cloudflare Pages: Edit 權限的 API token
+#   CLOUDFLARE_ACCOUNT_ID  Cloudflare 帳號 ID
+#
+# 並且先建立過一次 Pages 專案：
+#   npx wrangler pages project create notes --production-branch main
+#
+# 如果改用「方式 A」（Cloudflare 後台 Git 整合），這個檔案就不需要了，可以直接刪除。
+# 詳細說明見 README.md。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 同一分支上只保留最新一次部署，舊的自動取消
+concurrency:
+  group: cloudflare-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 取出程式碼
+        uses: actions/checkout@v4
+
+      - name: 檢查 secrets 是否已設定
+        id: guard
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$TOKEN" ] || [ -z "$ACCOUNT" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::尚未設定 CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID，跳過部署。設定方式見 README.md。"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 部署到 Cloudflare Pages
+        if: steps.guard.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name=notes --branch=main
