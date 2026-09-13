@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>開發環境建置紀錄 — 筆記</title>
+<meta name="description" content="Windows 11 開發環境建置：VS Code、Node.js、Git、GitHub CLI、Python，以及一次 Chocolatey 假性失敗的完整診斷。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%92%3C/text%3E%3C/svg%3E">
+<script src="assets/app.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="topbar__home" href="index.html">筆記</a>
+  <nav>
+    <a href="lesserafim.html">LE SSERAFIM</a>
+    <a href="concert.html">台北演唱會</a>
+    <a href="setup.html" aria-current="page">環境建置</a>
+    <button class="theme-toggle" type="button">☾</button>
+  </nav>
+</header>
+
+<main>
+  <p class="eyebrow">Windows 11 · 2026-09-13</p>
+  <h1>開發環境建置紀錄</h1>
+  <p class="lede">
+    這台電腦的開發工具安裝結果，以及一次 Chocolatey「假性失敗」的完整診斷過程 ——
+    <strong>那次失敗的根因值得記下來，因為很容易再犯。</strong>
+  </p>
+
+  <nav class="toc">
+    <p class="toc__title">目錄</p>
+    <ol>
+      <li><a href="#tools">工具清單</a></li>
+      <li><a href="#auth">授權狀態</a></li>
+      <li><a href="#git">Git 全域設定</a></li>
+      <li><a href="#incident">事故：Chocolatey 假性失敗</a></li>
+      <li><a href="#lesson">教訓：主控台的「選取」模式</a></li>
+      <li><a href="#msi">附帶問題：MSI 錯誤碼 1618</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="tools">工具清單</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>工具</th><th>版本</th><th>路徑</th><th>狀態</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>VS Code</td><td class="num">1.137.0</td>
+          <td><code>%LOCALAPPDATA%\Programs\Microsoft VS Code</code></td>
+          <td><span class="pill pill--ok">原本就有</span></td>
+        </tr>
+        <tr>
+          <td>Node.js</td><td class="num">v24.21.0 (LTS)</td>
+          <td><code>C:\Program Files\nodejs</code></td>
+          <td><span class="pill pill--ok">原本就有</span></td>
+        </tr>
+        <tr>
+          <td>npm</td><td class="num">11.19.0</td>
+          <td><code>C:\Program Files\nodejs</code></td>
+          <td><span class="pill pill--ok">原本就有</span></td>
+        </tr>
+        <tr>
+          <td>Git</td><td class="num">2.55.0.windows.5</td>
+          <td><code>C:\Program Files\Git</code></td>
+          <td><span class="pill pill--ok">原本就有</span></td>
+        </tr>
+        <tr>
+          <td>GitHub CLI</td><td class="num">2.100.0</td>
+          <td><code>C:\Program Files\GitHub CLI</code></td>
+          <td><span class="pill pill--ok">本次安裝</span></td>
+        </tr>
+        <tr>
+          <td>Python</td><td class="num">3.14.7</td>
+          <td><code>C:\Python314</code></td>
+          <td><span class="pill pill--ok">修復完成</span></td>
+        </tr>
+        <tr>
+          <td>pip</td><td class="num">26.2.1</td>
+          <td><code>C:\Python314\Lib\site-packages\pip</code></td>
+          <td><span class="pill pill--ok">正常</span></td>
+        </tr>
+        <tr>
+          <td>Chocolatey</td><td class="num">2.7.4</td>
+          <td><code>C:\ProgramData\chocolatey</code></td>
+          <td><span class="pill pill--ok">20 個套件、零失敗</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    GitHub CLI 是用 <code>winget</code> 裝的，而不是 Chocolatey ——
+    因為當時 choco 正在裝 Visual Studio Build Tools 並握著 MSI 的鎖（見<a href="#msi">錯誤碼 1618</a>）。
+  </p>
+
+  <pre><code>winget install --id GitHub.cli --exact --source winget \
+  --accept-source-agreements --accept-package-agreements --silent</code></pre>
+
+  <h2 id="auth">授權狀態</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>服務</th><th>帳號／狀態</th><th>細節</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>GitHub</td>
+          <td><span class="pill pill--ok">已登入</span> <code>zmchentw</code></td>
+          <td>Token 存在 Windows keyring；權限 <code>gist</code>、<code>read:org</code>、<code>repo</code>；Git 協定 HTTPS</td>
+        </tr>
+        <tr>
+          <td>Cloudflare</td>
+          <td><span class="pill pill--ok">已連線</span></td>
+          <td>連接器 23 個工具可用，實際呼叫 API 驗證通過</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    GitHub 走的是 <strong>device flow</strong>：<code>gh auth login --web</code> 產生一次性驗證碼，
+    在 <code>github.com/login/device</code> 輸入後按 Authorize 完成。
+  </p>
+
+  <h2 id="git">Git 全域設定</h2>
+
+  <pre><code>git config --global user.name  "zmchen"
+git config --global user.email "zmchen.tw@gmail.com"
+git config --global init.defaultBranch main
+git config --global credential.helper manager</code></pre>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>設定</th><th>值</th><th>為什麼</th></tr></thead>
+      <tbody>
+        <tr><td><code>user.name</code></td><td>zmchen</td><td>commit 的作者名稱，沒設會擋住第一次 commit</td></tr>
+        <tr><td><code>user.email</code></td><td>zmchen.tw@gmail.com</td><td>同上，也是 GitHub 對應貢獻紀錄的依據</td></tr>
+        <tr><td><code>init.defaultBranch</code></td><td><code>main</code></td><td>配合 GitHub 的慣例，避免新倉庫還叫 <code>master</code></td></tr>
+        <tr><td><code>credential.helper</code></td><td><code>manager</code></td><td>憑證交給 Windows 認證管理員，push 不用一直輸入密碼</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="incident">事故：Chocolatey 假性失敗</h2>
+
+  <p>
+    症狀：安裝 Python 的畫面停在 <code>Installing 64-bit python314...</code> 不動，
+    隔天早上收到三個套件失敗的紅字。
+  </p>
+
+  <pre><code>Failures
+ - python    - Failed to install python because a previous dependency failed.
+ - python3   - Failed to install python3 because a previous dependency failed.
+ - python314 (exited -1) - Error while running
+               'C:\ProgramData\chocolatey\lib\python314\tools\chocolateyInstall.ps1'.</code></pre>
+
+  <h3>log 拼出來的真實時間軸</h3>
+
+  <ul class="timeline">
+    <li>
+      <time>前一天 21:54</time>
+      <code>choco upgrade</code> 開始執行
+    </li>
+    <li>
+      <time>期間</time>
+      滑鼠點進主控台視窗 → 進入「選取」模式 → <strong>所有輸出被凍結</strong>
+    </li>
+    <li>
+      <time>02:45:22</time>
+      <code>[WARN] Chocolatey timed out waiting for the command to finish</code>
+      —— <strong>逾時先觸發了，choco 判定套件失敗</strong>
+    </li>
+    <li>
+      <time>11:53:45</time>
+      按下 <code>Esc</code> 解除凍結 → <code>[INFO] python314 has been installed.</code>
+      <strong>Python 其實安裝成功了</strong>
+    </li>
+    <li>
+      <time>11:53:46</time>
+      <code>[ERROR] The upgrade of python314 was NOT successful.</code>
+      —— 帳面早就記成失敗，套件被搬進 <code>lib-bad</code> 隔離區
+    </li>
+  </ul>
+
+  <p>
+    所以這是<strong>假性失敗</strong>：Python 3.14.7 從頭到尾都裝好了、可以執行、PATH 也設好了、
+    shim 也建立指向 <code>C:\Python314\python.exe</code>。壞掉的只有 Chocolatey 的登記帳。
+  </p>
+
+  <h3>修復步驟</h3>
+
+  <ol>
+    <li>把 <code>C:\ProgramData\chocolatey\lib-bad\python314</code> 備份後移出隔離區</li>
+    <li>以管理員權限重新登記，<strong>並關掉執行逾時</strong></li>
+  </ol>
+
+  <pre><code>choco install python3 -y --execution-timeout=0 --no-progress
+choco install python  -y --execution-timeout=0 --no-progress</code></pre>
+
+  <p>結果：</p>
+
+  <pre><code>python|3.14.7
+python3|3.14.7
+python314|3.14.7</code></pre>
+
+  <p>三個套件全部重新登記成功，<code>lib-bad</code> 清空，共 20 個套件零失敗。</p>
+
+  <div class="note">
+    <p class="note__title">關鍵參數</p>
+    <p>
+      <code>--execution-timeout=0</code> 關閉 Chocolatey 的執行逾時（預設 2700 秒／45 分鐘）。
+      裝大型套件（Visual Studio、Windows SDK、大型 runtime）時值得加上，
+      否則慢一點就會被誤判成失敗。
+    </p>
+  </div>
+
+  <h2 id="lesson">教訓：主控台的「選取」模式</h2>
+
+  <p>
+    <strong>這次事故的唯一根因，是在 Windows 主控台視窗裡點了滑鼠。</strong>
+  </p>
+
+  <p>
+    在 <code>cmd.exe</code> 或 <code>powershell.exe</code> 的視窗裡點擊或拖曳選取文字，
+    會讓主控台進入<strong>標記／選取模式</strong>。這個模式會<strong>暫停視窗的所有輸出</strong>，
+    正在輸出文字的程式就會被阻塞，看起來像當機 —— 但它其實是在等你放開。
+  </p>
+
+  <p>辨識方式：<strong>視窗標題會多出「選取」兩個字</strong>。</p>
+
+  <pre><code>選取 系統管理員: Windows PowerShell</code></pre>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>情況</th><th>做法</th></tr></thead>
+      <tbody>
+        <tr><td>已經卡住了</td><td>按 <code>Esc</code>（或在視窗內按 <code>Enter</code>）解除，積壓的輸出會一次噴完</td></tr>
+        <tr><td>預防</td><td>跑長時間指令時不要在視窗內點滑鼠</td></tr>
+        <tr><td>要複製文字</td><td>先讓指令跑完，或改用 Windows Terminal（不會因選取而阻塞輸出）</td></tr>
+        <tr><td>長工作</td><td>加大或關閉安裝工具的逾時設定，例如 <code>--execution-timeout=0</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 id="msi">附帶問題：MSI 錯誤碼 1618</h2>
+
+  <p>
+    安裝 GitHub CLI 時第一次失敗：
+  </p>
+
+  <pre><code>Another installation is already in progress. Try again later.
+Installer failed with exit code: 1618</code></pre>
+
+  <p>
+    <code>1618</code> = <code>ERROR_INSTALL_ALREADY_RUNNING</code>。
+    Windows Installer（MSI）<strong>同一時間只允許一個安裝作業</strong>，
+    當時 choco 正在裝 Visual Studio 2026 C++ Build Tools 與 Windows SDK，把鎖佔住了。
+  </p>
+
+  <p>解法不是重試到死，而是等 MSI 空出來。用一個背景輪詢腳本處理：</p>
+
+  <pre><code>$busy = 'vs_install|winsdksetup|vs_setup|^setup$|VSIXInstaller'
+while ((Get-Date) -lt $deadline) {
+    $running = @(Get-Process | Where-Object { $_.ProcessName -match $busy })
+    $choco   = @(Get-Process choco -ErrorAction SilentlyContinue)
+    if ($running.Count -eq 0 -and $choco.Count -eq 0) { break }
+    Start-Sleep -Seconds 30
+}
+winget install --id GitHub.cli --exact --silent</code></pre>
+
+  <div class="note">
+    <p class="note__title">PowerShell 5.1 的編碼陷阱</p>
+    <p>
+      第一版腳本直接掛掉，錯誤是 <code>The string is missing the terminator</code>。
+      原因是腳本以 <strong>UTF-8 無 BOM</strong> 寫入，而 <strong>Windows PowerShell 5.1 會用系統 ANSI 字碼頁去讀</strong>，
+      中文註解變成亂碼、把引號吃掉，導致語法錯誤。
+    </p>
+    <p>
+      解法：<code>.ps1</code> 檔要嘛存成 <strong>UTF-8 with BOM</strong>，要嘛<strong>只用 ASCII 內容</strong>。
+      同理，<code>Set-Content</code> / <code>Add-Content</code> 寫檔時要明確加 <code>-Encoding utf8</code>。
+    </p>
+  </div>
+</main>
+
+<footer>
+  <p>
+    整理自 2026-09-13 的對話與 <code>C:\ProgramData\chocolatey\logs\chocolatey.log</code>。
+    <a href="index.html">回筆記首頁</a>
+  </p>
+</footer>
+
+</body>
+</html>

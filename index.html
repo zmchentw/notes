@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>筆記 — LE SSERAFIM 與環境建置紀錄</title>
+<meta name="description" content="LE SSERAFIM 入門指南、成員背景、2026 台北演唱會資訊，以及開發環境建置與疑難排解紀錄。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%92%3C/text%3E%3C/svg%3E">
+<script src="assets/app.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <a class="topbar__home" href="index.html">筆記</a>
+  <nav>
+    <a href="lesserafim.html">LE SSERAFIM</a>
+    <a href="concert.html">台北演唱會</a>
+    <a href="setup.html">環境建置</a>
+    <button class="theme-toggle" type="button">☾</button>
+  </nav>
+</header>
+
+<main>
+  <p class="eyebrow">個人筆記站</p>
+  <h1>筆記</h1>
+  <p class="lede">
+    這裡保存兩份整理：一份是為了跟孩子有話聊而做的 <strong>LE SSERAFIM 補課筆記</strong>，
+    另一份是這台電腦的<strong>開發環境建置與疑難排解紀錄</strong>。
+    兩份都是對話整理而成，來源都標在各頁底部。
+  </p>
+
+  <div class="cards">
+    <a class="card" href="lesserafim.html">
+      <p class="eyebrow">音樂 · 成員</p>
+      <h3>LE SSERAFIM 入門指南</h3>
+      <p>團名的真正含義、五位成員各自的來路、代表曲時間軸、為什麼吸引人，以及 20 分鐘入門收聽順序。</p>
+    </a>
+
+    <a class="card" href="concert.html">
+      <p class="eyebrow">2026 / 11 / 14–15</p>
+      <h3>PUREFLOW 台北演唱會</h3>
+      <p>林口體育館連唱兩天。場地、票價、售票時程與目前還能怎麼買票 —— 含一個要注意的時間問題。</p>
+    </a>
+
+    <a class="card" href="setup.html">
+      <p class="eyebrow">Windows · 開發環境</p>
+      <h3>環境建置紀錄</h3>
+      <p>VS Code、Node.js、Git、GitHub CLI、Python 的安裝結果，以及一次 Chocolatey 假性失敗的完整診斷過程。</p>
+    </a>
+  </div>
+
+  <h2>關於這個站</h2>
+
+  <p>
+    純靜態網站，沒有任何框架與外部資源依賴，字體用系統內建的黑體堆疊，
+    所以在 Windows 與 macOS 上都能正常顯示繁體中文，離線也讀得動。
+  </p>
+
+  <p>
+    右上角可以切換深淺色主題，預設跟隨系統設定，切換後記在瀏覽器本機。
+  </p>
+
+  <div class="note">
+    <p class="note__title">部署方式</p>
+    <p>
+      原始碼放在 GitHub，推上 <code>main</code> 後由 GitHub Pages 與 Cloudflare Pages
+      兩邊同時自動部署。詳細設定寫在倉庫的 <code>README.md</code> 裡。
+    </p>
+  </div>
+</main>
+
+<footer>
+  <p>內容由對話整理，最後更新 2026-09-13。</p>
+</footer>
+
+</body>
+</html>
