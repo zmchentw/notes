@@ -317,7 +317,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   box-shadow: var(--shadow);
 }
 
-.member > h3 {
+.member h3 {
   margin: 0 0 .2rem;
   font-size: 1.3rem;
 }
@@ -518,7 +518,7 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
 /* ---------- 成員色條 ---------- */
 
 .member { border-left: 5px solid var(--m, var(--accent)); }
-.member > h3 { color: var(--m, var(--ink)); }
+.member h3 { color: var(--m, var(--ink)); }
 
 .member--sakura  { --m: #f2789f; }
 .member--chaewon { --m: #8a6df0; }
@@ -543,6 +543,124 @@ td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   background: color-mix(in srgb, var(--m, var(--accent)) 13%, transparent);
 }
 .member .member__hook strong { color: var(--m, var(--accent-ink)); }
+
+/* ---------- 主視覺裡的 logo 與封面 ---------- */
+
+.hero__logo {
+  display: block;
+  width: clamp(11rem, 34vw, 17rem);
+  height: auto;
+  margin: 0 0 1.3rem;
+}
+
+.cover {
+  margin: 0 0 2.4rem;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: var(--bg-sunken);
+  box-shadow: var(--shadow-lg);
+}
+.cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.cover figcaption {
+  padding: .65rem .95rem .75rem;
+  font-size: .78rem;
+  line-height: 1.55;
+  color: var(--ink-faint);
+  background: var(--bg-raised);
+  border-top: 1px solid var(--rule-soft);
+}
+.cover figcaption a { color: var(--ink-soft); }
+
+/* 主視覺內嵌的封面（去掉外框，直接貼合漸層） */
+.hero .cover {
+  margin: 1.6rem 0 0;
+  border-color: rgba(255,255,255,.18);
+  box-shadow: none;
+}
+.hero .cover figcaption {
+  background: rgba(0,0,0,.3);
+  border-top-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.72);
+}
+.hero .cover figcaption a { color: rgba(255,255,255,.85); }
+
+/* ---------- 成員個人照 ---------- */
+
+.portraits {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(45%, 9.5rem), 1fr));
+  margin: 2rem 0 2.4rem;
+}
+
+.portrait {
+  margin: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-raised);
+  border: 1px solid var(--rule);
+  border-top: 4px solid var(--m, var(--accent));
+  box-shadow: var(--shadow);
+}
+.portrait img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+.portrait figcaption {
+  padding: .6rem .7rem .7rem;
+  text-align: center;
+  font-size: .82rem;
+  line-height: 1.45;
+  color: var(--ink-faint);
+}
+.portrait figcaption b {
+  display: block;
+  font-size: .95rem;
+  color: var(--m, var(--ink));
+  margin-bottom: .1rem;
+}
+
+/* 成員卡片內的小頭像 */
+
+.member__head {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin: 0 0 1rem;
+}
+.member__head > div { min-width: 0; }
+.member__head h3,
+.member__head .member__tag { margin: 0; }
+.member__head h3 { margin-bottom: .2rem; }
+
+.member__photo {
+  flex: none;
+  width: 76px;
+  height: 95px;
+  border-radius: 9px;
+  object-fit: cover;
+  object-position: 50% 20%;
+  border: 2px solid var(--m, var(--accent));
+  background: var(--bg-sunken);
+}
+
+/* ---------- 圖片出處 ---------- */
+
+.credits {
+  font-size: .84rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.credits li { margin: .35rem 0; }
+.credits code { font-size: .8em; }
 
 /* ---------- 影片嵌入 ---------- */
 
