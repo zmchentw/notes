@@ -713,6 +713,19 @@ figure.video figcaption .yr {
   color: var(--ink-faint);
 }
 
+/* ---------- 瀏覽次數 ---------- */
+
+.hits {
+  margin: .5rem 0 0;
+  font-size: .8rem;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.hits b {
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
 /* ---------- 頁尾 ---------- */
 
 footer {
