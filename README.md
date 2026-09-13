@@ -1,15 +1,14 @@
 # notes
 
-個人筆記靜態網站。純 HTML／CSS，無框架、無建置步驟、無外部資源依賴。
+LE SSERAFIM 筆記靜態網站。純 HTML／CSS，無框架、無建置步驟、無外部資源依賴。
 
 ## 內容
 
 | 頁面 | 說明 |
 |---|---|
-| `index.html` | 首頁 |
+| `index.html` | 首頁與三十秒摘要 |
 | `lesserafim.html` | LE SSERAFIM 入門指南：團名、成員背景、代表曲、為什麼吸引人 |
 | `concert.html` | 2026 PUREFLOW 台北演唱會：時間地點、票價、售票時程 |
-| `setup.html` | Windows 開發環境建置紀錄與疑難排解 |
 
 ## 本機預覽
 
